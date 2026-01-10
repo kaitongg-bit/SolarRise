@@ -39,8 +39,8 @@ struct ContentView: View {
             
             SettingsView()
                 .tabItem {
-                    Image(systemName: selectedTab == 2 ? "leaf.fill" : "leaf")
-                    Text("宁静")
+                    Image(systemName: selectedTab == 2 ? "gearshape.fill" : "gearshape")
+                    Text("设置")
                 }
                 .tag(2)
         }

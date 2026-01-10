@@ -164,25 +164,29 @@ struct ResultView: View {
                             
                             // Redemption button (if within grace period)
                             Button(action: {
-                                // Handle redemption
+                                onDismiss()
+                                // Post a notification to handle logic
+                                // The user already lost 'amount', so the penalty to reach 1.5x is 0.5x more
+                                NotificationCenter.default.post(name: NSNotification.Name("RedeemStreak"), object: amount)
                             }) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "flame.fill")
-                                    Text("重燃太阳 (-\(Int(Double(amount) * 1.5)))")
+                                    Text("重燃太阳 (加付 \(Int(Double(amount) * 0.5)) 光点)")
                                         .font(.system(size: 16, weight: .semibold))
                                 }
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 12)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 30)
+                                .padding(.vertical, 14)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    Capsule()
                                         .fill(
                                             LinearGradient(
-                                                colors: [.orange, .red],
+                                                colors: [Color(hex: "FF4500"), Color(hex: "FF0000")],
                                                 startPoint: .leading,
                                                 endPoint: .trailing
                                             )
                                         )
+                                        .shadow(color: .red.opacity(0.3), radius: 10, y: 5)
                                 )
                             }
                             .opacity(textOpacity)

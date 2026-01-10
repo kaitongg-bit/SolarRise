@@ -2,75 +2,86 @@ import SwiftUI
 
 struct LightCheckView: View {
     @StateObject private var lightSensor = LightSensor()
+    @State private var showQuiz = false
     @Binding var isPresented: Bool
     var onChallengeSuccess: () -> Void
     var onChallengeFailure: () -> Void
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.white.ignoresSafeArea() // Use light theme
             
-            VStack {
-                Text("Face the Light")
-                    .font(.largeTitle)
-                    .foregroundStyle(.white)
-                    .padding(.top, 50)
-                
-                Spacer()
-                
-                // Visual Indicator of Light
-                Circle()
-                    .fill(Color.yellow.opacity(Double(lightSensor.currentBrightness)))
-                    .frame(width: 200, height: 200)
-                    .shadow(color: .orange, radius: CGFloat(lightSensor.currentBrightness * 50))
-                    .overlay(
-                        Circle().stroke(Color.white, lineWidth: 2)
-                    )
-                
-                Text("Brightness: \(Int(lightSensor.currentBrightness * 100))%")
-                    .foregroundStyle(.gray)
-                    .padding()
-                
-                Spacer()
-                
-                Button("Cancel (Give Up)") {
-                    lightSensor.stop()
-                    onChallengeFailure()
-                    isPresented = false
+            if !showQuiz {
+                VStack(spacing: 40) {
+                    Text("面向晨曦")
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .padding(.top, 60)
+                    
+                    Text("请面向窗户或明亮光源以收集光能")
+                        .font(.system(size: 16))
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    // Visual Indicator
+                    ZStack {
+                        Circle()
+                            .stroke(Color.gray.opacity(0.1), lineWidth: 2)
+                            .frame(width: 220, height: 220)
+                        
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color(hex: "FFD700").opacity(0.6), .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 110
+                                )
+                            )
+                            .frame(width: 220 * CGFloat(lightSensor.currentBrightness), height: 220 * CGFloat(lightSensor.currentBrightness))
+                            .animation(.spring(), value: lightSensor.currentBrightness)
+                        
+                        Image(systemName: "sun.max.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(Color(hex: "FFD700"))
+                    }
+                    
+                    Text("\(Int(lightSensor.currentBrightness * 100))%")
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .foregroundColor(.orange)
+                    
+                    Spacer()
+                    
+                    Button("取消 (放弃光点)") {
+                        lightSensor.stop()
+                        onChallengeFailure()
+                        isPresented = false
+                    }
+                    .font(.system(size: 14))
+                    .foregroundColor(.red.opacity(0.6))
+                    .padding(.bottom, 20)
+                    
+                    #if targetEnvironment(simulator)
+                    Button("Debug: 跳过感应") {
+                        showQuiz = true
+                    }
+                    .padding(.bottom, 40)
+                    #endif
                 }
-                .foregroundStyle(.red)
-                .padding(.bottom, 10)
-                
-                #if targetEnvironment(simulator)
-                Button("Debug: Sim Success") {
+            } else {
+                MathQuizView(onQuizSuccess: {
                     lightSensor.stop()
                     onChallengeSuccess()
                     isPresented = false
-                }
-                .padding()
-                .background(Color.yellow.opacity(0.2))
-                .cornerRadius(10)
-                .foregroundStyle(.yellow)
-                .padding(.bottom, 20)
-                #else
-                // Secret tap area for testing on physical devices too if needed
-                Color.clear
-                    .frame(height: 44)
-                    .contentShape(Rectangle())
-                    .onTapGesture(count: 3) {
-                        lightSensor.stop()
-                        onChallengeSuccess()
-                        isPresented = false
-                    }
-                #endif
+                })
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
             }
         }
         .onChange(of: lightSensor.isBright) { oldValue, newValue in
             if newValue {
-                // Challenge Succeeded
-                lightSensor.stop()
-                onChallengeSuccess()
-                isPresented = false
+                withAnimation {
+                    showQuiz = true
+                }
             }
         }
     }

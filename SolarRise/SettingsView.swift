@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import SwiftData
 
 struct SettingsView: View {
     @StateObject private var storeManager = StoreManager()
