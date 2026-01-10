@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SolarRiseApp: App {
@@ -13,5 +14,6 @@ struct SolarRiseApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [DailyRecord.self, UserStats.self])
     }
 }

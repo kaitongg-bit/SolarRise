@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>NSCameraUsageDescription</key>
+	<string>我们需要通过前置摄像头检测周围光线强度来确认你已经起床。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>我们需要访问相册以保存挑战成功的日出瞬间（可选）。</string>
+</dict>
+</plist>
