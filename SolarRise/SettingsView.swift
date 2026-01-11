@@ -94,7 +94,7 @@ struct SettingsView: View {
                             .clipped()
                         }
                         
-                        // App Settings
+                            // App Settings
                         VStack(alignment: .leading, spacing: 12) {
                             Text("偏好设置")
                                 .font(.system(size: 16, weight: .medium))
@@ -214,8 +214,8 @@ struct MockProductRow: View {
 
 struct SettingRow: View {
     let icon: String
-    let title: String
-    let detail: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
     
     var body: some View {
         HStack {
@@ -238,7 +238,7 @@ struct SettingRow: View {
 
 struct ToggleSettingRow: View {
     let icon: String
-    let title: String
+    let title: LocalizedStringKey
     @Binding var isOn: Bool
     
     var body: some View {

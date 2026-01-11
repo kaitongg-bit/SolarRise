@@ -318,7 +318,7 @@ struct HistoryRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.date.formatted(date: .long, time: .omitted))
                     .font(.system(size: 16, weight: .medium))
-                Text(statusText(record.status))
+                Text(LocalizedStringKey(statusText(record.status)))
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
             }

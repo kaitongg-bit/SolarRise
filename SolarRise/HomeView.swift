@@ -259,6 +259,37 @@ struct HomeView: View {
                             Spacer()
                             
                             VStack(spacing: 24) {
+                                // DEBUG SECTION
+                                #if DEBUG
+                                VStack(spacing: 8) {
+                                    Button("发送测试通知 (5s后)") {
+                                        scheduleDebugNotification()
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                                    
+                                    HStack {
+                                        Button("-1小时") {
+                                            simulateTimeTravel(hours: -1)
+                                        }
+                                        Button("+1小时") {
+                                            simulateTimeTravel(hours: 1)
+                                        }
+                                        Button("+6小时") {
+                                            simulateTimeTravel(hours: 6)
+                                        }
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.purple)
+                                    
+                                    Text("模拟时间: \(Date(timeIntervalSince1970: startTime).formatted(date: .omitted, time: .shortened)) (开始) -> \(Date().formatted(date: .omitted, time: .shortened)) (现在)")
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(8)
+                                .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.2)))
+                                #endif
+                                
                                 Button(action: { showingChallenge = true }) {
                                     Text("立即唤醒 (调试)")
                                         .font(.system(size: 14, weight: .medium))
@@ -306,6 +337,12 @@ struct HomeView: View {
             }
         }
         .preferredColorScheme(.light)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TriggerWakeUp"))) { _ in
+            // Only trigger if we are in waiting state (challenge active) to avoid disrupting set-up
+            if isChallengeActive {
+                showingChallenge = true
+            }
+        }
         #if os(iOS)
         .fullScreenCover(isPresented: $showingChallenge) {
             LightCheckView(
@@ -415,6 +452,37 @@ struct HomeView: View {
             startTime = Date().timeIntervalSince1970
             isChallengeActive = true
         }
+    }
+    
+    private func scheduleDebugNotification() {
+        print("🔔 Debug: Scheduling notification...")
+        
+        let content = UNMutableNotificationContent()
+        content.title = "晨曦呼唤 (Test)"
+        content.body = "太阳出来了，该去种太阳了！"
+        content.sound = .default
+        
+        // Ensure triggering works even if app is in foreground (requires delegate, but for now just system banner)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("❌ Notification Error: \(error.localizedDescription)")
+            } else {
+                print("✅ Notification Scheduled! Check your lock screen in 5 seconds.")
+            }
+        }
+    }
+    
+    private func simulateTimeTravel(hours: Int) {
+        // We simulate time passing by shifting the startTime backwards
+        // (making it seem like we started earlier to break the "within 5 mins" grace period)
+        startTime -= Double(hours * 3600)
+        
+        // AND we shift the targetTime backwards
+        // (to make the deadline appear closer to 'now', triggering the "< 1 hour" penalty)
+        targetTime -= Double(hours * 3600)
     }
     
     private func handleSuccess() {
