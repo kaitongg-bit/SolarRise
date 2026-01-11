@@ -21,33 +21,73 @@ struct ContentView: View {
         }
     }
     
+   @State private var selection = 0
+    
+    // Splash Screen Logic
+    @State private var showSplash = false
+    @AppStorage("lastSplashDate") private var lastSplashDate: String = ""
+    @AppStorage("showDailySplash") private var showDailySplash = true
+    
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem {
-                    Image(systemName: selectedTab == 0 ? "sun.max.fill" : "sun.max")
-                    Text("晨曦")
-                }
-                .tag(0)
+        ZStack {
+            TabView(selection: $selection) {
+                HomeView()
+                    .tabItem {
+                        Image(systemName: "sun.max.fill")
+                        Text("晨曦")
+                    }
+                    .tag(0)
+                
+                HistoryView()
+                    .tabItem {
+                        Image(systemName: "clock.arrow.circlepath")
+                        Text("历程")
+                    }
+                    .tag(1)
+                
+                SettingsView()
+                    .tabItem {
+                        Image(systemName: "gearshape.fill")
+                        Text("设置")
+                    }
+                    .tag(2)
+            }
+            .accentColor(.orange)
             
-            HistoryView()
-                .tabItem {
-                    Image(systemName: selectedTab == 1 ? "timer.circle.fill" : "timer")
-                    Text("历程")
+            // Splash Screen Overlay
+            if showSplash {
+                SplashScreenView {
+                    withAnimation {
+                        showSplash = false
+                    }
                 }
-                .tag(1)
-            
-            SettingsView()
-                .tabItem {
-                    Image(systemName: selectedTab == 2 ? "gearshape.fill" : "gearshape")
-                    Text("设置")
-                }
-                .tag(2)
+                .transition(.opacity)
+                .zIndex(100)
+            }
         }
-        .tint(Color(hex: "FFA500"))
-        .preferredColorScheme(.light)
         .onAppear {
+            checkAndShowSplash()
             requestNotificationPermission()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ReplaySplash"))) { _ in
+            withAnimation {
+                showSplash = true
+            }
+        }
+    }
+    
+    private func checkAndShowSplash() {
+        // Respect user setting
+        guard showDailySplash else { return }
+        
+        let today = Date().formatted(date: .numeric, time: .omitted)
+        
+        // Debug: Uncomment next line to force show splash every time
+        // lastSplashDate = "" 
+        
+        if lastSplashDate != today {
+            showSplash = true
+            lastSplashDate = today
         }
     }
     

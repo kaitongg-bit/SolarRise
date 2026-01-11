@@ -290,12 +290,25 @@ struct HomeView: View {
                                 .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.2)))
                                 #endif
                                 
+                                // Primary Action: Wake Up Now (Manual Trigger)
                                 Button(action: { showingChallenge = true }) {
-                                    Text("立即唤醒 (调试)")
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.orange.opacity(0.6))
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "sun.max.fill")
+                                        Text("我醒了，开始检阅")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .font(.system(size: 16, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .frame(width: 220)
+                                    .padding(.vertical, 14)
+                                    .background(
+                                        Capsule()
+                                            .fill(LinearGradient(colors: [.orange, .yellow], startPoint: .leading, endPoint: .trailing))
+                                            .shadow(color: .orange.opacity(0.3), radius: 10, y: 5)
+                                    )
                                 }
                                 
+                                // Secondary Action: Regret (Danger)
                                 Button(action: {
                                     handleRegret()
                                 }) {

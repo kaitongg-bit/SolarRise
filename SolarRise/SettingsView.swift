@@ -13,6 +13,8 @@ struct SettingsView: View {
     
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @AppStorage("showDailySplash") private var showDailySplash = true
+    @State private var showBackTapTutorial = false
     
     var body: some View {
         ZStack {
@@ -103,12 +105,48 @@ struct SettingsView: View {
                             
                             VStack(spacing: 1) {
                                 SettingRow(icon: "globe", title: "语言", detail: "跟随系统")
-                                ToggleSettingRow(icon: "bell.badge", title: "每日提醒", isOn: $notificationsEnabled)
-                                ToggleSettingRow(icon: "hand.tap", title: "触感反馈", isOn: $hapticsEnabled)
+                                ToggleSettingRow(icon: "bell.badge", title: LocalizedStringKey("每日提醒"), isOn: $notificationsEnabled)
+                                ToggleSettingRow(icon: "sun.haze", title: LocalizedStringKey("晨间寄语"), isOn: $showDailySplash)
+                                ToggleSettingRow(icon: "hand.tap", title: LocalizedStringKey("触感反馈"), isOn: $hapticsEnabled)
+                                
+                                Button(action: {
+                                    // Trigger Splash Screen Replay
+                                    NotificationCenter.default.post(name: NSNotification.Name("ReplaySplash"), object: nil)
+                                }) {
+                                    SettingRow(icon: "arrow.counterclockwise", title: LocalizedStringKey("重温今日寄语"), detail: "")
+                                }
+                                .buttonStyle(.plain)
+                                
+                                Button(action: { showBackTapTutorial = true }) {
+                                    HStack {
+                                        Image(systemName: "iphone.circle") // More visible icon
+                                            .foregroundColor(.orange)      // Distinct color
+                                            .frame(width: 24)
+                                        Text("设置背部轻点唤醒")
+                                            .font(.system(size: 16))
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        Text("查看教程")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.gray)
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.gray.opacity(0.5))
+                                    }
+                                    .padding()
+                                    .background(Color.white)
+                                }
+                                .buttonStyle(.plain)
+                                Divider().padding(.leading, 50)
                             }
                             .background(Color.white)
                             .cornerRadius(16)
                             .clipped()
+                            .alert(LocalizedStringKey("如何设置背部轻点？"), isPresented: $showBackTapTutorial) {
+                                Button("知道了", role: .cancel) { }
+                            } message: {
+                                Text(LocalizedStringKey("1. 打开系统「快捷指令」App\n2. 点击 + 号，搜索「SolarRise」并添加「立即唤醒」\n3. 打开系统「设置」>「辅助功能」\n4. 「触控」>「轻点背面」\n5. 选择双击/三击，找到您刚才添加的快捷指令\n\n设置完成后，敲击手机背面即可快速进入晨间检阅！"))
+                            }
                         }
                         
                         // About

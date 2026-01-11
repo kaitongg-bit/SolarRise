@@ -25,7 +25,8 @@
 "承诺挑战" = "Commit Challenge";
 "种下太阳" = "Plant the Sun";
 "静候晨光" = "Awaiting Dawn";
-"立即唤醒 (调试)" = "Wake Up Now (Debug)";
+"立即唤醒 (调试)" = "Wake Up Now";
+"我醒了，开始检阅" = "I'm Awake, Check Light";
 "反悔退出" = "Give Up";
 "5分钟内误操作免费取消" = "Free cancellation within 5 mins";
 "入睡前反悔不计违约" = "No penalty for early cancellation";
@@ -51,6 +52,13 @@
 "跟随系统" = "System Default";
 "每日提醒" = "Daily Reminder";
 "触感反馈" = "Haptics";
+"晨间寄语" = "Morning Message";
+"重温今日寄语" = "Replay Today's Message";
+"设置背部轻点唤醒" = "Setup Back Tap";
+"查看教程" = "View Tutorial";
+"如何设置背部轻点？" = "How to setup Back Tap?";
+"1. 打开系统「快捷指令」App\n2. 点击 + 号，搜索「SolarRise」并添加「立即唤醒」\n3. 打开系统「设置」>「辅助功能」\n4. 「触控」>「轻点背面」\n5. 选择双击/三击，找到您刚才添加的快捷指令\n\n设置完成后，敲击手机背面即可快速进入晨间检阅！" = "1. Open Shortcuts App\n2. Add 'Wake Up Now' action from SolarRise\n3. Go to Settings > Accessibility > Touch\n4. Scroll to Back Tap\n5. Assign Double/Triple Tap to the shortcut\n\nTap back of phone to wake up!";
+"知道了" = "Got it";
 "隐私政策" = "Privacy Policy";
 "服务协议" = "Terms of Service";
 "简体中文" = "Simplified Chinese";
@@ -89,3 +97,9 @@
 "挑战成功！连胜持续中" = "Challenge Success! Streak Continues";
 "挑战失败，连胜中断" = "Challenge Failed. Streak Broken";
 "继续" = "Continue";
+
+/* Splash Screen */
+"起了么" = "SolarRise";
+"让光点代替意志力\n陪你对抗清晨的引力" = "Let Sun Drops replace willpower,\nfighting gravity of the morning.";
+"基于行为心理学「损失厌恶」原理\n将自我承诺具象化\n愿每一个清晨，都始于一份庄重的契约" = "Based on 'Loss Aversion' psychology,\nvisualize your commitment.\nMay every morning start with a solemn contract.";
+"开启今日" = "Start Today";

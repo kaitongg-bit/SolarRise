@@ -8,9 +8,14 @@ class LightSensor: NSObject, ObservableObject {
     
     private let captureSession = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
-    private let brightnessThreshold: Float = 0.4 // Lower threshold for easier detection
+    // Balanced threshold: 0.45
+    // Allows bright indoor lights and window light (usually hits 0.5-0.6)
+    // Filters out dim corners/ambient shadow (usually < 0.3)
+    private let brightnessThreshold: Float = 0.45
+    
+    // ~1 second consistency (30 frames) to prevent glitches
+    private let requiredConsistentFrames = 30
     private var consistentBrightFrames = 0
-    private let requiredConsistentFrames = 30 // ~1 second consistency is enough
     
     override init() {
         super.init()
@@ -37,6 +42,16 @@ class LightSensor: NSObject, ObservableObject {
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
         
         do {
+            // LOCK EXPOSURE: Prevent auto-brightening in dark
+            try device.lockForConfiguration()
+            if device.isExposureModeSupported(.custom) {
+                // Set to low exposure duration and low ISO to ensure DARK is DARK
+                let duration = CMTime(value: 1, timescale: 60) // 1/60s shutter
+                let iso = device.activeFormat.minISO // Minimum sensitivity
+                device.setExposureModeCustom(duration: duration, iso: iso, completionHandler: nil)
+            }
+            device.unlockForConfiguration()
+            
             let input = try AVCaptureDeviceInput(device: device)
             if captureSession.canAddInput(input) {
                 captureSession.addInput(input)
