@@ -8,9 +8,9 @@ class LightSensor: NSObject, ObservableObject {
     
     private let captureSession = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
-    private let brightnessThreshold: Float = 0.6
+    private let brightnessThreshold: Float = 0.4 // Lower threshold for easier detection
     private var consistentBrightFrames = 0
-    private let requiredConsistentFrames = 60 // ~2 seconds at 30fps
+    private let requiredConsistentFrames = 30 // ~1 second consistency is enough
     
     override init() {
         super.init()
@@ -33,7 +33,8 @@ class LightSensor: NSObject, ObservableObject {
     }
     
     private func setupSession() {
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+        // Switch to FRONT camera for easier "selfie with light" detection
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
         
         do {
             let input = try AVCaptureDeviceInput(device: device)

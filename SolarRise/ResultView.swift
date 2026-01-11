@@ -129,7 +129,7 @@ struct ResultView: View {
                         .opacity(textOpacity)
                     
                     // Title
-                    Text(success ? "日出东方" : "日落西山")
+                    Text(LocalizedStringKey(success ? "日出东方" : "日落西山"))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(

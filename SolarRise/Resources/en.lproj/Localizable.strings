@@ -1,3 +1,6 @@
+/* English Localization */
+
+/* Existing Keys */
 "home_bet_title" = "Commitment";
 "home_target_time" = "Wake Up Time";
 "home_start_button" = "Plant the Sun";
@@ -6,3 +9,83 @@
 "result_redemption_title" = "The sun is setting. Reignite it?";
 "result_redeem_button" = "Reignite Sun (-500)";
 "common_sundrops" = "Sun Drops";
+
+/* Content View */
+"晨曦" = "Dawn";
+"历程" = "History";
+"设置" = "Settings";
+
+/* Home View */
+"豪掷千金买晨曦，你是懂自律的！" = "High stakes, bright morning. You master self-discipline!";
+"这个注码，明早的阳光一定很贵。" = "With this bet, tomorrow's sunshine is precious.";
+"细水长流，明早也要准时相约哦。" = "Consistency is key. See you tomorrow morning.";
+"种下一颗种子，期待明早的惊喜。" = "Plant a seed and await tomorrow's surprise.";
+"设定晨曦之时" = "Set Wake-Up Time";
+"光点" = "Sun Drops";
+"承诺挑战" = "Commit Challenge";
+"种下太阳" = "Plant the Sun";
+"静候晨光" = "Awaiting Dawn";
+"立即唤醒 (调试)" = "Wake Up Now (Debug)";
+"反悔退出" = "Give Up";
+"5分钟内误操作免费取消" = "Free cancellation within 5 mins";
+"入睡前反悔不计违约" = "No penalty for early cancellation";
+"临阵脱逃扣除 80% 押注" = "80% penalty for last-minute exit";
+"深夜反悔扣除 20% 押注" = "20% penalty for late night exit";
+"投入光点" = "Invest Sun Drops";
+"数量" = "Amount";
+"确定" = "Confirm";
+"取消" = "Cancel";
+"请输入 10 - 1000 之间的数量" = "Enter amount between 10 - 1000";
+"点击数字可手动输入" = "Tap number to edit";
+
+/* Settings View */
+"调整你的晨曦之旅" = "Customize your journey";
+"我的资产" = "My Assets";
+"充值" = "Top Up";
+"获取更多光点" = "Get More Sun Drops";
+"100 光点 (测试)" = "100 Sun Drops (Test)";
+"500 光点 (测试)" = "500 Sun Drops (Test)";
+"免费" = "Free";
+"偏好设置" = "Preferences";
+"语言" = "Language";
+"跟随系统" = "System Default";
+"每日提醒" = "Daily Reminder";
+"触感反馈" = "Haptics";
+"隐私政策" = "Privacy Policy";
+"服务协议" = "Terms of Service";
+"简体中文" = "Simplified Chinese";
+"已开启" = "On";
+"中等" = "Medium";
+
+/* History View */
+"成长历程" = "History";
+"尚无挑战记录" = "No Records Yet";
+"本月摘要" = "Month Summary";
+"成功唤醒" = "Wake-ups";
+"赖床反悔" = "Snoozes";
+"光点盈亏" = "Profit/Loss";
+"挽回" = "Redeemed";
+"挑战成功" = "Success";
+"挑战失败" = "Failed";
+"重燃成功" = "Redeemed";
+"待定" = "Pending";
+"日" = "Sun";
+"一" = "Mon";
+"二" = "Tue";
+"三" = "Wed";
+"四" = "Thu";
+"五" = "Fri";
+"六" = "Sat";
+
+/* Light Check View */
+"面向晨曦" = "Face the Dawn";
+"请面向窗户或明亮光源以收集光能" = "Face a bright light source to collect energy";
+"取消 (放弃光点)" = "Cancel (Forfeit)";
+"Debug: 跳过感应" = "Debug: Skip Sensor";
+
+/* Result View */
+"日出东方" = "Sunrise";
+"日落西山" = "Sunset";
+"挑战成功！连胜持续中" = "Challenge Success! Streak Continues";
+"挑战失败，连胜中断" = "Challenge Failed. Streak Broken";
+"继续" = "Continue";

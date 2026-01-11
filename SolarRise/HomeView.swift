@@ -14,11 +14,13 @@ struct HomeView: View {
     @State private var showingResult = false
     @State private var lastResultSuccess = false
     @State private var lastResultAmount = 0
+    @State private var showBetInputAlert = false
     
     @AppStorage("isChallengeActive") private var isChallengeActive = false
     @AppStorage("targetTime") private var targetTime: Double = Date().timeIntervalSince1970
     @AppStorage("startTime") private var startTime: Double = Date().timeIntervalSince1970
     @AppStorage("lockedBet") private var lockedBet: Int = 0
+    @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     
     var currentUser: UserStats {
         if let first = userStats.first {
@@ -39,6 +41,18 @@ struct HomeView: View {
             return "细水长流，明早也要准时相约哦。"
         } else {
             return "种下一颗种子，期待明早的惊喜。"
+        }
+    }
+    
+    private var messageStyle: (text: Color, bg: Color) {
+        if betAmount >= 500 {
+            return (.white, Color(hex: "FF4500")) // OrangeRed
+        } else if betAmount >= 200 {
+            return (.white, Color(hex: "FF8C00")) // DarkOrange
+        } else if betAmount >= 100 {
+            return (Color(hex: "856404"), Color(hex: "FFF3CD")) // Dark Yellow text on light yellow
+        } else {
+            return (Color(hex: "1B5E20"), Color(hex: "E8F5E9")) // Dark Green text on light green (Seed)
         }
     }
     
@@ -94,13 +108,19 @@ struct HomeView: View {
                         VStack(spacing: 0) {
                             // 1. Motivation & Time Picker Group
                             VStack(spacing: 20) {
-                                Text(motivationalMessage)
-                                    .font(.system(size: 16, weight: .medium, design: .rounded))
-                                    .foregroundColor(.orange.opacity(0.9))
-                                    .padding(.horizontal, 40)
-                                    .multilineTextAlignment(.center)
-                                    .frame(height: 50)
-                                    .animation(.spring(), value: betAmount)
+                                Text(LocalizedStringKey(motivationalMessage))
+                                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                                    .foregroundColor(messageStyle.text)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        Capsule()
+                                            .fill(messageStyle.bg)
+                                            .shadow(color: messageStyle.bg.opacity(0.4), radius: 8, y: 4)
+                                    )
+                                    .id(motivationalMessage) // Crucial for transition
+                                    .transition(.scale(scale: 0.5).combined(with: .opacity))
+                                    .animation(.spring(response: 0.35, dampingFraction: 0.6), value: motivationalMessage)
                                 
                                 VStack(spacing: 0) {
                                     Text("设定晨曦之时")
@@ -126,20 +146,53 @@ struct HomeView: View {
                                     .frame(width: geometry.size.width * 0.6, height: geometry.size.width * 0.6) // Responsive size
                                     .frame(maxWidth: 240, maxHeight: 240) // But capped maximum
                                 
-                                VStack(spacing: 4) {
-                                    HStack(alignment: .firstTextBaseline, spacing: 4) {
-                                        Text("\(betAmount)")
-                                            .font(.system(size: 36, weight: .light, design: .rounded))
-                                            .contentTransition(.numericText())
-                                        Text("光点")
-                                            .font(.system(size: 13))
-                                            .foregroundColor(.gray)
+                                VStack(spacing: 8) {
+                                    Button(action: { showBetInputAlert = true }) {
+                                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                                            Text("\(betAmount)")
+                                                .font(.system(size: 42, weight: .light, design: .rounded))
+                                                .contentTransition(.numericText())
+                                                .foregroundColor(.primary)
+                                            Text("光点")
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.gray)
+                                            Image(systemName: "pencil.circle.fill")
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.gray.opacity(0.4))
+                                                .offset(y: -10)
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.gray.opacity(0.05))
+                                                .opacity(0.5)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                    .alert("投入光点", isPresented: $showBetInputAlert) {
+                                        TextField("数量", value: $betAmount, format: .number)
+                                            .keyboardType(.numberPad)
+                                        Button("确定") {
+                                            // Clamp value
+                                            if betAmount > currentUser.currentBalance {
+                                                betAmount = currentUser.currentBalance
+                                            }
+                                            if betAmount < 10 {
+                                                betAmount = 10
+                                            }
+                                            if betAmount > 1000 {
+                                                betAmount = 1000
+                                            }
+                                        }
+                                        Button("取消", role: .cancel) { }
+                                    } message: {
+                                        Text("请输入 10 - 1000 之间的数量")
                                     }
                                     
-                                    Text("承诺挑战")
-                                        .font(.system(size: 11, weight: .medium))
-                                        .foregroundColor(.gray.opacity(0.3))
-                                        .tracking(1)
+                                    Text("点击数字可手动输入")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(.gray.opacity(0.4))
                                 }
                             }
                         }
@@ -171,7 +224,7 @@ struct HomeView: View {
                                 .shadow(color: Color(hex: "FFA500").opacity(0.3), radius: 15, y: 10)
                         }
                         // Dynamic bottom padding: Safe Area + TabBar height estimate
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 100)
+                        .padding(.bottom, geometry.safeAreaInsets.bottom + 150)
                         
                     } else {
                         // MARK: - Walking/Waiting State Center
@@ -329,17 +382,21 @@ struct HomeView: View {
         isChallengeActive = false
         lockedBet = 0
         
-        #if canImport(UIKit)
-        UINotificationFeedbackGenerator().notificationOccurred(refundRate == 1.0 ? .success : .warning)
-        #endif
+        if hapticsEnabled {
+            #if canImport(UIKit)
+            UINotificationFeedbackGenerator().notificationOccurred(refundRate == 1.0 ? .success : .warning)
+            #endif
+        }
     }
     
     private func commitToWakeUp() {
         guard currentUser.currentBalance >= betAmount else { return }
         
-        #if canImport(UIKit)
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        #endif
+        if hapticsEnabled {
+            #if canImport(UIKit)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            #endif
+        }
         
         currentUser.currentBalance -= betAmount
         lockedBet = betAmount

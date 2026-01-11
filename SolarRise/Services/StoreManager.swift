@@ -9,9 +9,9 @@ class StoreManager: ObservableObject {
     
     // Example Product IDs - in a real app, these would be in App Store Connect
     private let productDict: [String: String] = [
-        "com.solarRise.sundrops.100": "100 Sun Drops",
-        "com.solarRise.sundrops.500": "500 Sun Drops",
-        "com.solarRise.sundrops.1000": "1000 Sun Drops"
+        "com.solarise.coin.100": "100 光点",
+        "com.solarise.coin.500": "500 光点",
+        "com.solarise.coin.1200": "1200 光点"
     ]
     
     var updateListenerTask: Task<Void, Error>? = nil
@@ -26,16 +26,24 @@ class StoreManager: ObservableObject {
     }
 
     func requestProducts() async {
+        print("💡 Requesting products with IDs: \(productDict.keys)")
         do {
             // Using the keys from the dictionary
             let storeProducts = try await Product.products(for: productDict.keys)
-            self.products = storeProducts
+            print("✅ Successfully fetched \(storeProducts.count) products.")
+            for product in storeProducts {
+                print("   - Found: \(product.displayName) (\(product.displayPrice)) ID: \(product.id)")
+            }
+            if storeProducts.isEmpty {
+                print("⚠️ Warning: Fetched product list is empty. Check StoreKit configuration scheme.")
+            }
+            self.products = storeProducts.sorted { $0.price < $1.price }
         } catch {
-            print("Failed to load products: \(error)")
+            print("❌ Failed to load products: \(error)")
         }
     }
 
-    func purchase(_ product: Product) async throws {
+    func purchase(_ product: Product) async throws -> Transaction? {
         let result = try await product.purchase()
         
         switch result {
@@ -50,10 +58,12 @@ class StoreManager: ObservableObject {
             // Always finish a transaction.
             await transaction.finish()
             
+            return transaction
+            
         case .userCancelled, .pending:
-            break
+            return nil
         default:
-            break
+            return nil
         }
     }
     

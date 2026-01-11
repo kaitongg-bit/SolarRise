@@ -4,6 +4,9 @@ struct AbstractSolarDial: View {
     @Binding var betAmount: Int
     let maxBalance: Int
     
+    // Read directly from AppStorage since we don't need to write to it here
+    @AppStorage("hapticsEnabled") private var hapticsEnabled = true
+    
     @State private var rotation: Double = 0
     
     private let minBet = 10
@@ -102,8 +105,10 @@ struct AbstractSolarDial: View {
                                 
                                 if clampedBet != betAmount {
                                     #if canImport(UIKit)
-                                    let generator = UIImpactFeedbackGenerator(style: .soft)
-                                    generator.impactOccurred()
+                                    if hapticsEnabled {
+                                        let generator = UIImpactFeedbackGenerator(style: .soft)
+                                        generator.impactOccurred()
+                                    }
                                     #endif
                                     betAmount = clampedBet
                                 }
